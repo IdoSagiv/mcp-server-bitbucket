@@ -43,10 +43,17 @@ interface RequestOptions {
 }
 
 export class BitbucketClient {
-  private token: string;
+  private authHeader: string;
 
-  constructor(token: string) {
-    this.token = token;
+  constructor(token: string, email?: string) {
+    if (email) {
+      // Atlassian API token: use Basic Auth (email:token)
+      const encoded = Buffer.from(`${email}:${token}`).toString("base64");
+      this.authHeader = `Basic ${encoded}`;
+    } else {
+      // Repository/project/workspace access token: use Bearer Auth
+      this.authHeader = `Bearer ${token}`;
+    }
   }
 
   async request<T>(
@@ -64,7 +71,7 @@ export class BitbucketClient {
     }
 
     const headers: Record<string, string> = {
-      Authorization: `Bearer ${this.token}`,
+      Authorization: this.authHeader,
       Accept: "application/json",
     };
 
@@ -100,7 +107,7 @@ export class BitbucketClient {
     const response = await fetch(url.toString(), {
       method,
       headers: {
-        Authorization: `Bearer ${this.token}`,
+        Authorization: this.authHeader,
         Accept: "text/plain",
       },
     });
@@ -121,7 +128,7 @@ export class BitbucketClient {
     const response = await fetch(absoluteUrl, {
       method: "GET",
       headers: {
-        Authorization: `Bearer ${this.token}`,
+        Authorization: this.authHeader,
         Accept: "application/json",
       },
     });
