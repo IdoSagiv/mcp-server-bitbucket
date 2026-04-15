@@ -122,3 +122,55 @@ export interface BitbucketActivity {
   };
   comment?: BitbucketComment;
 }
+
+export interface BitbucketSourceEntry {
+  path: string;
+  type: "commit_file" | "commit_directory";
+  size?: number;
+  commit?: { hash: string };
+  attributes?: string[];
+  mimetype?: string | null;
+}
+
+export interface BitbucketRef {
+  name: string;
+  target: {
+    hash: string;
+    date: string;
+    message?: string;
+    author?: {
+      raw: string;
+      user?: BitbucketUser;
+    };
+  };
+  type: string;
+}
+
+export interface BitbucketCommit {
+  hash: string;
+  message: string;
+  date: string;
+  author: {
+    raw: string;
+    user?: BitbucketUser;
+  };
+  parents?: Array<{ hash: string }>;
+}
+
+export interface BitbucketSearchResult {
+  type: string;
+  content_match_count: number;
+  content_matches: Array<{
+    lines: Array<{
+      line: number;
+      segments: Array<{
+        text: string;
+        match?: boolean;
+      }>;
+    }>;
+  }>;
+  file: {
+    path: string;
+    type: string;
+  };
+}
