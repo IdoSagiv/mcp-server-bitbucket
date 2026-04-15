@@ -29,7 +29,6 @@ Give AI assistants like Claude the ability to interact with your Bitbucket pull 
 <tr><th colspan="2">Code Review</th></tr>
 <tr><td><code>list_pr_comments</code></td><td>List comments with filtering by author, resolution status, or type</td></tr>
 <tr><td><code>add_pr_comment</code></td><td>Add general, inline, or reply comments to a PR</td></tr>
-<tr><td><code>resolve_pr_comment</code></td><td>Resolve or unresolve a comment</td></tr>
 <tr><td><code>approve_pull_request</code></td><td>Approve a PR or remove your approval</td></tr>
 <tr><td><code>request_changes</code></td><td>Mark a PR as "changes requested"</td></tr>
 
@@ -238,19 +237,6 @@ Restart your MCP client, then ask Claude:
 | file_path | string | | File path for inline comment |
 | line | number | | Line number for inline comment |
 | parent_id | number | | Parent comment ID for replies |
-
-</details>
-
-<details>
-<summary><code>resolve_pr_comment</code></summary>
-
-| Parameter | Type | Required | Description |
-|-----------|------|:--------:|-------------|
-| workspace | string | | Workspace slug |
-| repo_slug | string | Yes | Repository slug |
-| pr_id | number | Yes | Pull request ID |
-| comment_id | number | Yes | Comment ID to resolve or unresolve |
-| action | string | | `"resolve"` (default) or `"unresolve"` |
 
 </details>
 
