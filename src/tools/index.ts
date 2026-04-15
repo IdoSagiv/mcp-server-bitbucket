@@ -10,6 +10,7 @@ import * as addPrComment from "./add-pr-comment.js";
 import * as mergePullRequest from "./merge-pull-request.js";
 import * as approvePullRequest from "./approve-pull-request.js";
 import * as requestChanges from "./request-changes.js";
+import * as resolvePrComment from "./resolve-pr-comment.js";
 import * as declinePullRequest from "./decline-pull-request.js";
 import * as getPrDiff from "./get-pr-diff.js";
 import * as getPrActivity from "./get-pr-activity.js";
@@ -23,6 +24,7 @@ const tools = [
   createPullRequest,
   listPrComments,
   addPrComment,
+  resolvePrComment,
   mergePullRequest,
   approvePullRequest,
   requestChanges,
