@@ -22,7 +22,7 @@ const email = process.env.BITBUCKET_USER_EMAIL;
 const client = new BitbucketClient(token, email);
 
 const server = new Server(
-  { name: "bitbucket", version: "1.0.0" },
+  { name: "bitbucket", version: "1.1.0" },
   { capabilities: { tools: {} } },
 );
 

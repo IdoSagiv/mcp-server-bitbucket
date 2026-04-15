@@ -4,6 +4,10 @@ import type {
   BitbucketRepository,
   BitbucketUser,
   BitbucketActivity,
+  BitbucketSourceEntry,
+  BitbucketRef,
+  BitbucketCommit,
+  BitbucketSearchResult,
 } from "./types.js";
 
 export function formatUser(user: BitbucketUser): string {
@@ -156,6 +160,88 @@ export function formatActivity(activities: BitbucketActivity[]): string {
         return `**Comment** by ${formatUser(a.comment.user)} on ${formatDate(a.comment.created_on)}: ${snippet}${truncated}`;
       }
       return `**Activity** on PR #${a.pull_request.id}`;
+    })
+    .join("\n\n");
+}
+
+export function formatDirectoryListing(
+  entries: BitbucketSourceEntry[],
+  path: string,
+): string {
+  if (entries.length === 0) return `Directory \`${path || "/"}\` is empty.`;
+
+  const dirs = entries.filter((e) => e.type === "commit_directory");
+  const files = entries.filter((e) => e.type === "commit_file");
+  const sorted = [...dirs, ...files];
+
+  const lines: string[] = [
+    `## Directory: ${path || "/"}`,
+    ``,
+    `${dirs.length} directories, ${files.length} files`,
+    ``,
+  ];
+
+  for (const entry of sorted) {
+    const name = entry.path.split("/").pop() || entry.path;
+    if (entry.type === "commit_directory") {
+      lines.push(`- [DIR]  ${name}/`);
+    } else {
+      const size = entry.size != null ? ` (${entry.size} bytes)` : "";
+      lines.push(`- [FILE] ${name}${size}`);
+    }
+  }
+
+  return lines.join("\n");
+}
+
+export function formatRef(ref: BitbucketRef): string {
+  const hash = ref.target.hash.slice(0, 7);
+  const date = formatDate(ref.target.date);
+  return `**${ref.name}** — ${hash} — ${date}`;
+}
+
+export function formatRefList(
+  refs: BitbucketRef[],
+  kind: "branch" | "tag",
+): string {
+  const plural = kind === "branch" ? "Branches" : "Tags";
+  if (refs.length === 0) return `No ${plural.toLowerCase()} found.`;
+
+  const header = `## ${plural} (${refs.length} found)\n`;
+  const list = refs.map((r, i) => `${i + 1}. ${formatRef(r)}`).join("\n");
+  return header + "\n" + list;
+}
+
+export function formatCommit(commit: BitbucketCommit): string {
+  const hash = commit.hash.slice(0, 7);
+  const date = formatDate(commit.date);
+  const author = commit.author.user
+    ? formatUser(commit.author.user)
+    : commit.author.raw;
+  const message = commit.message.split("\n")[0];
+  return `**${hash}** ${message}\n   by ${author} — ${date}`;
+}
+
+export function formatCommitList(commits: BitbucketCommit[]): string {
+  if (commits.length === 0) return "No commits found.";
+  return commits.map((c, i) => `${i + 1}. ${formatCommit(c)}`).join("\n\n");
+}
+
+export function formatSearchResults(
+  results: BitbucketSearchResult[],
+): string {
+  if (results.length === 0) return "No matches found.";
+
+  return results
+    .map((r) => {
+      const lines: string[] = [`### ${r.file.path}`];
+      for (const match of r.content_matches) {
+        for (const line of match.lines) {
+          const text = line.segments.map((s) => s.text).join("");
+          lines.push(`  L${line.line}: ${text}`);
+        }
+      }
+      return lines.join("\n");
     })
     .join("\n\n");
 }

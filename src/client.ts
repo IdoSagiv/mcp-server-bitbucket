@@ -101,8 +101,19 @@ export class BitbucketClient {
     return (await response.json()) as T;
   }
 
-  async requestRaw(method: string, path: string): Promise<string> {
+  async requestRaw(
+    method: string,
+    path: string,
+    options?: { query?: Record<string, string> },
+  ): Promise<string> {
     const url = new URL(`${BASE_URL}${path}`);
+    if (options?.query) {
+      for (const [key, value] of Object.entries(options.query)) {
+        if (value !== undefined && value !== "") {
+          url.searchParams.set(key, value);
+        }
+      }
+    }
 
     const response = await fetch(url.toString(), {
       method,

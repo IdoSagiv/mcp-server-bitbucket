@@ -1,14 +1,14 @@
 <p align="center">
   <h1 align="center">mcp-server-bitbucket</h1>
   <p align="center">
-    An MCP server for Bitbucket Cloud &mdash; pull requests, code review, comments, and more.
+    An MCP server for Bitbucket Cloud &mdash; source browsing, pull requests, code review, debugging, and more.
     <br />
     <a href="#getting-started">Getting Started</a> &middot; <a href="#available-tools">Tools</a> &middot; <a href="#usage-examples">Examples</a> &middot; <a href="#tool-reference">Reference</a>
   </p>
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/version-1.0.0-blue" alt="Version" />
+  <img src="https://img.shields.io/badge/version-1.1.0-blue" alt="Version" />
   <img src="https://img.shields.io/badge/license-MIT-green" alt="License" />
   <img src="https://img.shields.io/badge/node-%3E%3D18-brightgreen" alt="Node" />
   <img src="https://img.shields.io/badge/Bitbucket%20Cloud-REST%20API%20v2.0-0052CC" alt="Bitbucket API" />
@@ -16,7 +16,7 @@
 
 ---
 
-Give AI assistants like Claude the ability to interact with your Bitbucket pull requests &mdash; create, search, review, comment, merge, and more &mdash; all through the [Model Context Protocol](https://modelcontextprotocol.io/).
+Give AI assistants like Claude the ability to interact with your Bitbucket repositories &mdash; browse source code, search, review pull requests, debug across repos, and more &mdash; all through the [Model Context Protocol](https://modelcontextprotocol.io/).
 
 ## Available Tools
 
@@ -39,6 +39,17 @@ Give AI assistants like Claude the ability to interact with your Bitbucket pull 
 <tr><th colspan="2">PR Insights</th></tr>
 <tr><td><code>get_pr_diff</code></td><td>Get the full diff as raw text</td></tr>
 <tr><td><code>get_pr_activity</code></td><td>Get the activity timeline &mdash; updates, approvals, comments</td></tr>
+
+<tr><th colspan="2">Source Browsing</th></tr>
+<tr><td><code>get_file_content</code></td><td>Read a file from a repository at any branch, tag, or commit</td></tr>
+<tr><td><code>list_directory</code></td><td>List directory contents at a given revision</td></tr>
+<tr><td><code>list_branches</code></td><td>List branches in a repository</td></tr>
+<tr><td><code>list_tags</code></td><td>List tags in a repository</td></tr>
+
+<tr><th colspan="2">Debugging</th></tr>
+<tr><td><code>search_code</code></td><td>Search for code patterns in a repository</td></tr>
+<tr><td><code>list_commits</code></td><td>List commit history, filterable by branch and file path</td></tr>
+<tr><td><code>get_diff</code></td><td>Get the diff for a commit or between two revisions</td></tr>
 
 <tr><th colspan="2">Discovery & Utility</th></tr>
 <tr><td><code>list_repositories</code></td><td>List repositories in a workspace</td></tr>
@@ -163,6 +174,16 @@ Restart your MCP client, then ask Claude:
 > **"Get the activity timeline for PR #42 &mdash; who approved it, what comments are pending?"**
 
 > **"List all unresolved comments on PR #42 in `backend-api`"**
+
+> **"Show me the contents of `src/config.ts` on the `main` branch in `backend-api`"**
+
+> **"List all branches in the `backend-api` repo"**
+
+> **"Search for `handleAuth` across the `backend-api` repository"**
+
+> **"Show the last 10 commits on the `feature/login` branch"**
+
+> **"What changed in commit `abc1234` in `backend-api`?"**
 
 ---
 
@@ -328,6 +349,100 @@ Large diffs are truncated at 100KB.
 <summary><code>get_current_user</code></summary>
 
 No parameters.
+
+</details>
+
+<details>
+<summary><code>get_file_content</code></summary>
+
+| Parameter | Type | Required | Description |
+|-----------|------|:--------:|-------------|
+| workspace | string | | Workspace slug |
+| repo_slug | string | Yes | Repository slug |
+| path | string | Yes | File path within the repository |
+| revision | string | | Branch name, tag, or commit hash (defaults to repo main branch) |
+
+Large files are truncated at 100KB.
+
+</details>
+
+<details>
+<summary><code>list_directory</code></summary>
+
+| Parameter | Type | Required | Description |
+|-----------|------|:--------:|-------------|
+| workspace | string | | Workspace slug |
+| repo_slug | string | Yes | Repository slug |
+| path | string | | Directory path (defaults to repo root) |
+| revision | string | | Branch name, tag, or commit hash (defaults to repo main branch) |
+| max_depth | number | | Depth of directory tree (default: 1) |
+| max_pages | number | | Max pages to fetch (default: 5) |
+
+</details>
+
+<details>
+<summary><code>list_branches</code></summary>
+
+| Parameter | Type | Required | Description |
+|-----------|------|:--------:|-------------|
+| workspace | string | | Workspace slug |
+| repo_slug | string | Yes | Repository slug |
+| query | string | | FIQL filter (e.g. `name~"feature"`) |
+| sort | string | | Sort field (e.g. `-target.date` for newest first) |
+| max_pages | number | | Max pages to fetch (default: 3) |
+
+</details>
+
+<details>
+<summary><code>list_tags</code></summary>
+
+| Parameter | Type | Required | Description |
+|-----------|------|:--------:|-------------|
+| workspace | string | | Workspace slug |
+| repo_slug | string | Yes | Repository slug |
+| query | string | | FIQL filter (e.g. `name~"v1"`) |
+| sort | string | | Sort field (e.g. `-target.date` for newest first) |
+| max_pages | number | | Max pages to fetch (default: 3) |
+
+</details>
+
+<details>
+<summary><code>search_code</code></summary>
+
+| Parameter | Type | Required | Description |
+|-----------|------|:--------:|-------------|
+| workspace | string | | Workspace slug |
+| repo_slug | string | Yes | Repository slug |
+| query | string | Yes | Search query string |
+| max_pages | number | | Max pages to fetch (default: 3) |
+
+</details>
+
+<details>
+<summary><code>list_commits</code></summary>
+
+| Parameter | Type | Required | Description |
+|-----------|------|:--------:|-------------|
+| workspace | string | | Workspace slug |
+| repo_slug | string | Yes | Repository slug |
+| revision | string | | Branch, tag, or commit to start from (defaults to repo main branch) |
+| path | string | | Filter to commits affecting this file path |
+| include | string | | Commit hash or ref to include (for revision ranges) |
+| exclude | string | | Commit hash or ref to exclude (for revision ranges) |
+| max_pages | number | | Max pages to fetch (default: 3) |
+
+</details>
+
+<details>
+<summary><code>get_diff</code></summary>
+
+| Parameter | Type | Required | Description |
+|-----------|------|:--------:|-------------|
+| workspace | string | | Workspace slug |
+| repo_slug | string | Yes | Repository slug |
+| spec | string | Yes | A single commit hash or a range like `commit1..commit2` |
+
+Large diffs are truncated at 100KB.
 
 </details>
 

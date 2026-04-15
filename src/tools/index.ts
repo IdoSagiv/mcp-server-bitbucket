@@ -13,6 +13,13 @@ import * as requestChanges from "./request-changes.js";
 import * as declinePullRequest from "./decline-pull-request.js";
 import * as getPrDiff from "./get-pr-diff.js";
 import * as getPrActivity from "./get-pr-activity.js";
+import * as getFileContent from "./get-file-content.js";
+import * as listDirectory from "./list-directory.js";
+import * as listBranches from "./list-branches.js";
+import * as listTags from "./list-tags.js";
+import * as searchCode from "./search-code.js";
+import * as listCommits from "./list-commits.js";
+import * as getDiff from "./get-diff.js";
 import * as bbRequest from "./bb-request.js";
 
 const tools = [
@@ -29,6 +36,13 @@ const tools = [
   declinePullRequest,
   getPrDiff,
   getPrActivity,
+  getFileContent,
+  listDirectory,
+  listBranches,
+  listTags,
+  searchCode,
+  listCommits,
+  getDiff,
   bbRequest,
 ];
 
