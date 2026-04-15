@@ -1,0 +1,42 @@
+{
+  "name": "mcp-server-bitbucket",
+  "version": "1.0.0",
+  "description": "MCP server for Bitbucket Cloud — pull requests, code review, comments, and more",
+  "type": "module",
+  "main": "dist/index.js",
+  "bin": {
+    "mcp-server-bitbucket": "dist/index.js"
+  },
+  "files": [
+    "dist"
+  ],
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/IdoSagiv/mcp-server-bitbucket"
+  },
+  "keywords": [
+    "mcp",
+    "bitbucket",
+    "pull-request",
+    "code-review",
+    "claude"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "dev": "npx tsx src/index.ts"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.26.0",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.5.0"
+  }
+}
